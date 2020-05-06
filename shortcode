@@ -1,0 +1,94 @@
+<?php
+
+add_shortcode( 'MainMaps', 'custom_maps' );
+function custom_maps(){
+	ob_start();
+	?>
+	<style>
+	.map{
+			height: 450px;
+			width: 600px;
+		}
+	</style>
+	<div class="map" id="map"></div>
+	<script>
+	var map;
+	var InforObj = [];
+	var centerCords = {
+		lat: 4.470923,
+		lng: 97.968753,
+		};
+		
+	var icons = {
+			store: {
+				 icon: 'https://sultana.whellostudio.id/wp-content/uploads/2020/05/Location.svg'
+				}
+		};
+		
+	var markersOnMap = [
+		{
+			placeName: 'Main Location',
+			LatLng: [{
+					lat: 4.470923,
+					lng: 97.968753,
+				}], 
+			type: 'store'
+			
+		}
+	];
+		
+		window.onload = function () {
+			
+			initMap();
+			
+			};
+				
+		function addMarkerInfo() {
+				for ( var i = 0; i < markersOnMap.length; i++) {
+						var contentString = '<h3>' + markersOnMap[i].placeName + '</h3>';
+					
+						const marker = new google.maps.Marker({
+							position: markersOnMap[i].LatLng[0],
+							icon: icons[markersOnMap[i].type].icon,
+							map: map
+						});
+						
+						const infowindow = new google.maps.InfoWindow({
+							content: contentString
+						});
+						
+						marker.addListener('click', function(){
+							closeOtherInfo();
+							infowindow.open(marker.get('map'), marker);
+							InfoObj[0] = infowindow;
+						});
+			
+			}
+		}
+		
+		function closeOtherInfo() {
+			if(InfoObj.length > 0 ) {
+				InfoObj[0].set("marker", null);
+				InfoObj[0].close
+			}
+		}
+
+			
+		function initMap() {
+			
+			map = new google.maps.Map(document.getElementById('map'), {
+				
+				zoom: 20,
+				center: centerCords
+				
+				});
+				addMarkerInfo();
+			
+			}	
+	
+	</script>
+	 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACD3UQJQctVqv68NRn7Rxk45EVWyYmu9g&callback=initMap">
+    </script>
+	<?php
+	return ob_get_clean();
+	}
